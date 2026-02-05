@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: n8n-pvc
-  namespace: n8n-sales
+  namespace: n8n
 spec:
   accessModes:
     - ReadWriteOnce
@@ -14,7 +14,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: n8n
-  namespace: n8n-sales
+  namespace: n8n
 spec:
   replicas: 1
   selector:
@@ -32,7 +32,10 @@ spec:
             - name: DB_TYPE
               value: postgresdb
             - name: DB_POSTGRESDB_DATABASE
-              value: n8n
+              valueFrom:
+                configMapKeyRef:
+                  name: infra-config
+                  key: db-name
             - name: DB_POSTGRESDB_HOST
               value: postgres.database.svc.cluster.local
             - name: DB_POSTGRESDB_PORT
@@ -42,21 +45,24 @@ spec:
             - name: DB_POSTGRESDB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: n8n-secrets
+                  name: infra-secrets
                   key: database-password
             - name: N8N_ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
-                  name: n8n-secrets
-                  key: encryption-key
+                  name: infra-secrets
+                  key: n8n-encryption-key
             - name: N8N_HOST
-              value: "n8n.nettask.com.br"
+              valueFrom:
+                configMapKeyRef:
+                  name: infra-config
+                  key: domain
             - name: N8N_PROTOCOL
               value: https
             - name: N8N_PORT
               value: "5678"
             - name: WEBHOOK_URL
-              value: "https://n8n.nettask.com.br/"
+              value: "https://n8n.<<seu-dominio>>/"
           ports:
             - containerPort: 5678
           volumeMounts:
@@ -71,7 +77,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: n8n
-  namespace: n8n-sales
+  namespace: n8n
 spec:
   ports:
     - port: 5678
@@ -82,14 +88,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: n8n-ingress
-  namespace: n8n-sales
+  namespace: n8n
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-    - host: n8n.nettask.com.br
+    - host: n8n.<<seu-dominio>>
       http:
         paths:
           - path: /
