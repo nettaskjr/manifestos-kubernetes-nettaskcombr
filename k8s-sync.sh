@@ -38,7 +38,8 @@ find "$WORKING_DIR" -name "*.yaml" -type f -exec sed -i "s|<<k8s-internal-dns>>|
 
 # 4. Aplicar no Kubernetes
 echo "☸️ Aplicando manifestos no cluster (YAML)..."
-find "$WORKING_DIR" \( -name "*.yaml" -o -name "*.yml" \) -print0 | xargs -0 sudo k3s kubectl apply -f
+find "$WORKING_DIR" -type f ! \( -name "*.yaml" -o -name "*.yml" \) -delete
+sudo k3s kubectl apply -R -f "$WORKING_DIR"
 
 # 5. Limpeza
 echo "🧹 Limpando arquivos temporários..."
