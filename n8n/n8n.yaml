@@ -50,13 +50,13 @@ spec:
                   name: n8n-secrets
                   key: encryption-key
             - name: N8N_HOST
-              value: "n8n.nesttask.com.br"
+              value: "n8n.nettask.com.br"
             - name: N8N_PROTOCOL
               value: https
             - name: N8N_PORT
               value: "5678"
             - name: WEBHOOK_URL
-              value: "https://n8n.nesttask.com.br/"
+              value: "https://n8n.nettask.com.br/"
           ports:
             - containerPort: 5678
           volumeMounts:
@@ -89,7 +89,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-    - host: n8n.nesttask.com.br
+    - host: n8n.nettask.com.br
       http:
         paths:
           - path: /
