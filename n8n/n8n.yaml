@@ -53,6 +53,8 @@ spec:
               value: "n8n.nesttask.com.br"
             - name: N8N_PROTOCOL
               value: https
+            - name: N8N_PORT
+              value: "5678"
             - name: WEBHOOK_URL
               value: "https://n8n.nesttask.com.br/"
           ports:
