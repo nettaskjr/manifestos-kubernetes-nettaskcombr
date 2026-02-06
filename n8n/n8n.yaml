@@ -35,22 +35,25 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: infra-config
-                  key: db-name
+                  key: n8n-db-name
             - name: DB_POSTGRESDB_HOST
               value: postgres.database.svc.cluster.local
             - name: DB_POSTGRESDB_PORT
               value: "5432"
             - name: DB_POSTGRESDB_USER
-              value: n8n_user
+              valueFrom:
+                configMapKeyRef:
+                  name: infra-config
+                  key: n8n-db-user
             - name: DB_POSTGRESDB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: infra-secrets
-                  key: database-password
+                  name: n8n-secrets
+                  key: n8n-db-password
             - name: N8N_ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
-                  name: infra-secrets
+                  name: n8n-secrets
                   key: n8n-encryption-key
             - name: N8N_HOST
               valueFrom:

@@ -41,7 +41,13 @@ echo "☸️ Aplicando manifestos no cluster (YAML)..."
 find "$WORKING_DIR" -type f ! \( -name "*.yaml" -o -name "*.yml" \) -delete
 sudo k3s kubectl apply -R -f "$WORKING_DIR"
 
-# 5. Limpeza
+# 5. Executar Scripts de Setup Especializados (se existirem)
+if [ -f "$TARGET_DIR/scripts/setup-app.sh" ]; then
+    echo "🎯 Executando setup especializado do repositório..."
+    bash "$TARGET_DIR/scripts/setup-app.sh"
+fi
+
+# 6. Limpeza
 echo "🧹 Limpando arquivos temporários..."
 rm -rf "$WORKING_DIR"
 
