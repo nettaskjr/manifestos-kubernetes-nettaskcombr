@@ -33,8 +33,10 @@ fi
 
 # 2. Configuração de ConfigMaps Base (Namespace n8n)
 echo "⚙️ Configurando ConfigMaps de aplicação..."
+# Garantir que o ConfigMap existe com os valores universais e específicos
+# Usamos INFRA_DOMAIN (carregado do context.env) em vez de domain_name
 kubectl create configmap infra-config -n n8n --dry-run=client -o yaml | kubectl apply -f -
-kubectl patch configmap infra-config -n n8n --type merge -p "{\"data\":{\"n8n-db-name\":\"n8n\", \"n8n-db-user\":\"n8n_user\"}}"
+kubectl patch configmap infra-config -n n8n --type merge -p "{\"data\":{\"domain\":\"$INFRA_DOMAIN\", \"node-name\":\"$INFRA_NODE_NAME\", \"internal-dns\":\"$INFRA_INTERNAL_DNS\", \"n8n-db-name\":\"n8n\", \"n8n-db-user\":\"n8n_user\"}}"
 
 # 3. Criar Segretos no Kubernetes (Namespace n8n)
 echo "🔑 Configurando segredos no Kubernetes..."
