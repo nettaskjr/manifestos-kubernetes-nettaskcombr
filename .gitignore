@@ -1,0 +1,21 @@
+# Kubernetes Manifests Cliente - Segurança
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+
+# Infra Context & Secrets
+context.env
+k8s-secrets/
+.env*
+secrets.yaml
+n8n-secrets.yaml
+
+# Scripts & Temporários
+# Permitir apenas scripts de automação conhecidos
+!k8s-sync.sh
+!scripts/setup-app.sh
+tmp/
+*.log
+.DS_Store
