@@ -45,21 +45,10 @@ kubectl create secret generic n8n-secrets -n n8n \
     --from-literal=n8n-encryption-key="$N8N_ENC_KEY" \
     --dry-run=client -o yaml | kubectl apply -f -
 
-# 4. Provisionamento do Banco de Dados
-echo "🐘 Verificando Banco de Dados PostgreSQL..."
-PG_POD=$(kubectl get pods -n database -l app=postgres -o name | head -n 1)
-
-if [ -n "$PG_POD" ]; then
-  # Sincronizar criação de Banco e Usuário com a senha correta
-  kubectl exec -n database "$PG_POD" -- psql -U admin -d postgres -c "CREATE DATABASE n8n;" 2>/dev/null || true
-  kubectl exec -n database "$PG_POD" -- psql -U admin -d postgres -c "CREATE USER n8n_user WITH PASSWORD '$N8N_DB_PASS';" 2>/dev/null || \
-    kubectl exec -n database "$PG_POD" -- psql -U admin -d postgres -c "ALTER USER n8n_user WITH PASSWORD '$N8N_DB_PASS';"
-  
-  kubectl exec -n database "$PG_POD" -- psql -U admin -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n_user;"
-  echo "✅ Banco de Dados n8n pronto e senha sincronizada!"
-else
-  echo "⚠️ Erro: Pod do Postgres não encontrado."
-fi
+# 4. Reiniciar n8n para aplicar mudanças
+echo "� Reiniciando n8n (para garantir leitura de novos segredos)..."
+kubectl rollout restart deployment n8n -n n8n
+echo "🚀 Setup de infra/secrets concluído!"
 
 # 5. Reiniciar n8n para aplicar mudanças
 echo "🔄 Reiniciando n8n..."
