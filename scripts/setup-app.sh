@@ -6,6 +6,9 @@ CONTEXT_FILE="/etc/infra/context.env"
 
 echo "🎯 Iniciando setup especializado da aplicação..."
 
+# 0. Preparação do Namespace
+kubectl create namespace n8n --dry-run=client -o yaml | kubectl apply -f -
+
 # 1. Gestão de Segredos Persistentes (Local no Servidor)
 SECRETS_DIR="/mnt/db-vol/k8s-secrets"
 # Garantir que o diretório existe e é acessível
