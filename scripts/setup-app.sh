@@ -4,7 +4,7 @@
 CONTEXT_FILE="/etc/infra/context.env"
 [ -f "$CONTEXT_FILE" ] && source "$CONTEXT_FILE"
 
-echo "🎯 Iniciando setup especializado da aplicação..."
+echo "🎯 Iniciando setup especializado das aplicações..."
 
 # 0. Preparação do Namespace
 kubectl create namespace n8n --dry-run=client -o yaml | kubectl apply -f -
@@ -51,9 +51,8 @@ kubectl create secret generic n8n-secrets -n n8n \
 # 4. Reiniciar n8n para aplicar mudanças
 echo "� Reiniciando n8n (para garantir leitura de novos segredos)..."
 kubectl rollout restart deployment n8n -n n8n
-echo "🚀 Setup de infra/secrets concluído!"
-
+echo "🚀 Setup de infra/secrets do n8n concluído!"
 # 5. Reiniciar n8n para aplicar mudanças
 echo "🔄 Reiniciando n8n..."
 kubectl rollout restart deployment n8n -n n8n
-echo "🚀 Setup concluído! Verifique os logs em alguns instantes."
+echo "🚀 Setup das aplicações concluído! Verifique os logs em alguns instantes."
