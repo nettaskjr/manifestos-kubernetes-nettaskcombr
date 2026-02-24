@@ -87,24 +87,20 @@ spec:
   selector:
     app: n8n
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
   name: n8n-ingress
   namespace: n8n
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  rules:
-    - host: n8n.<<seu-dominio>>
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: n8n
-                port:
-                  number: 5678
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`n8n.<<seu-dominio>>`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+  tls:
+    certResolver: letsencrypt-prod
