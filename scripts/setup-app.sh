@@ -54,11 +54,7 @@ kubectl create secret generic n8n-secrets -n n8n \
     --from-literal=minio-secret-key="$MINIO_PASS" \
     --dry-run=client -o yaml | kubectl apply -f -
 
-# 4. Reiniciar n8n para aplicar mudanças
-echo "� Reiniciando n8n (para garantir leitura de novos segredos)..."
-kubectl rollout restart deployment n8n -n n8n
-echo "🚀 Setup de infra/secrets do n8n concluído!"
 # 5. Reiniciar n8n para aplicar mudanças
-echo "🔄 Reiniciando n8n..."
-kubectl rollout restart deployment n8n -n n8n
+echo "🔄 Reiniciando n8n (para garantir leitura de novos segredos)..."
+kubectl rollout restart deployment n8n -n n8n || true
 echo "🚀 Setup das aplicações concluído! Verifique os logs em alguns instantes."
