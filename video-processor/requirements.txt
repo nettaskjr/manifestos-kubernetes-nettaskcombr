@@ -1,0 +1,7 @@
+flask
+requests
+moviepy
+gTTS
+boto3
+botocore
+imageio-ffmpeg

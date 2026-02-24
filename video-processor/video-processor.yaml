@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-processor
+  namespace: n8n
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-processor
+  template:
+    metadata:
+      labels:
+        app: video-processor
+    spec:
+      containers:
+        - name: video-processor
+          image: video-processor:latest # Placeholder - deverá ser buildado localmente
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MINIO_ENDPOINT
+              value: "http://minio.minio.svc.cluster.local:9000"
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: minio-access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: minio-secret-key
+            - name: BUCKET_NAME
+              value: "videos-tiktok"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: video-processor
+  namespace: n8n
+spec:
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: video-processor

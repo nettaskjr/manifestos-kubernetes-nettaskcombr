@@ -41,11 +41,17 @@ echo "⚙️ Configurando ConfigMaps de aplicação..."
 kubectl create configmap infra-config -n n8n --dry-run=client -o yaml | kubectl apply -f -
 kubectl patch configmap infra-config -n n8n --type merge -p "{\"data\":{\"domain\":\"$INFRA_DOMAIN\", \"node-name\":\"$INFRA_NODE_NAME\", \"internal-dns\":\"$INFRA_INTERNAL_DNS\", \"n8n-db-name\":\"n8n\", \"n8n-db-user\":\"n8n_user\"}}"
 
-# 3. Criar Segretos no Kubernetes (Namespace n8n)
-echo "🔑 Configurando segredos no Kubernetes..."
+# 3. Coletar Segredos de Outros Namespaces (MinIO)
+echo "📦 Coletando credenciais do MinIO..."
+MINIO_PASS=$(kubectl get secret infra-secrets -n minio -o jsonpath='{.data.minio-root-password}' | base64 -d)
+
+# 4. Criar Segretos no Kubernetes (Namespace n8n)
+echo "🔑 Configurando segredos no Kubernetes (n8n)..."
 kubectl create secret generic n8n-secrets -n n8n \
     --from-literal=n8n-db-password="$N8N_DB_PASS" \
     --from-literal=n8n-encryption-key="$N8N_ENC_KEY" \
+    --from-literal=minio-access-key="admin" \
+    --from-literal=minio-secret-key="$MINIO_PASS" \
     --dry-run=client -o yaml | kubectl apply -f -
 
 # 4. Reiniciar n8n para aplicar mudanças
